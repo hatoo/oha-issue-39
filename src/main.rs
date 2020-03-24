@@ -15,7 +15,7 @@ async fn main() -> Result<(), tokio::task::JoinError> {
     // This spawn is necessary to reproduce the symptoms.
     tokio::spawn(async move {
         let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
-        let (ctrl_c_tx, mut ctrl_c_rx) = tokio::sync::mpsc::unbounded_channel();
+        let (mut ctrl_c_tx, mut ctrl_c_rx) = tokio::sync::mpsc::channel(1);
         tokio::spawn(async move {
             while let Ok(()) = cross_rx.recv() {
                 tx.send(()).unwrap();
@@ -24,8 +24,8 @@ async fn main() -> Result<(), tokio::task::JoinError> {
 
         tokio::spawn(async move {
             if let Ok(()) = tokio::signal::ctrl_c().await {
-                println!("send");
-                ctrl_c_tx.send(()).unwrap();
+                println!("send ctrl-c event");
+                ctrl_c_tx.send(()).await.unwrap();
             }
         });
 
