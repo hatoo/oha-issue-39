@@ -12,6 +12,7 @@ async fn main() -> Result<(), tokio::task::JoinError> {
         });
     }
 
+    // This spawn is necessary to reproduce the symptoms.
     tokio::spawn(async move {
         let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
         let (ctrl_c_tx, mut ctrl_c_rx) = tokio::sync::mpsc::unbounded_channel();
