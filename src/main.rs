@@ -31,7 +31,7 @@ async fn main() -> Result<(), tokio::task::JoinError> {
 
         loop {
             tokio::select! {
-                _ = rx.recv() => {  println!("recv"); }
+                _ = rx.recv() => { println!("recv"); }
                 _ = ctrl_c_rx.recv() => {
                     println!("ctrl-c");
                     std::process::exit(0);
